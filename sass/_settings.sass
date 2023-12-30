@@ -1,0 +1,223 @@
+*
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+
+body
+  font-family: 'Oswald', sans-serif
+  font-size: 16px
+  line-height: normal
+  font-weight: 400
+  color: #dddfd4
+
+h1,h2, h3,h4,h5,h6
+  font-weight: 600
+img
+  width: 100%
+  height: 100%
+  object-fit: cover
+
+.container
+  max-width: 1024px
+  margin: 0 auto
+
+.notes-box
+  position: relative
+  padding: 20px 0
+  width: 100%
+  min-height: 100vh
+  background: #5a7670
+  &__wrapper
+    display: flex
+    flex-wrap: wrap
+    align-items: flex-end
+  &__title
+    font-size: 3rem
+    letter-spacing: 0.2rem
+    margin-bottom: 16px
+    margin-right: 24px
+  &__btn
+    padding: 8px 24px
+    width: 120px
+    height: 38px
+    text-transform: uppercase
+    font-weight: 600
+    background: #fa2929d8
+    border-radius: 8px 4px
+    border: none
+    outline: none
+    color: inherit
+    transition: all .3s ease
+    margin-bottom: 24px
+    &:hover
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4)
+    &:active
+      opacity: 0.5
+  &__cards-box
+    display: flex
+    flex-wrap: wrap
+    gap: 24px
+    flex-basis: 100%
+  &__form-overlay
+    position: fixed
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    height: 100vh
+    display: flex
+    justify-content: center
+    align-items: center
+    background: #5a7670d0
+    opacity: 0
+    visibility: visible
+    transition: opacity 1.5s, visibility 2.5s
+  &__form
+    display: flex
+    flex-direction: column
+    gap: 16px
+
+.card-note
+  position: relative
+  padding: 24px
+  width: 320px
+  min-height: 250px
+  border-radius: 2px 16px
+  background: #b89f5d
+  color: #221d10
+  overflow: hidden
+  &_important
+    background: linear-gradient(149deg, #91FF00 27.5%, #FFAC00 81.44%)
+  &__title
+    font-size: 2.2rem
+    margin-bottom: 16px
+  &__img
+    width: 100%
+    height: 150px
+    border: 4px solid #5a7670
+    border-radius: 2px 32px
+    overflow: hidden
+    margin-bottom: 16px
+  &__desc
+    margin-bottom: 40px
+    overflow: hidden
+  &__btn-group
+    display: flex
+    justify-content: space-between
+  &__remove-btn
+    padding: 8px 16px
+    background: #fa292a
+    border-radius: 8px 4px
+    border: none
+    outline: none
+    color: inhetiet
+    transition: all .3s ease
+    &:hover
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4)
+      transition: all .3s ease
+    &:active
+      opacity: 0.5
+  &__important-btn
+    padding: 8px 16px
+    background: #fa292a
+    border-radius: 4px 8px
+    border: none
+    outline: none
+    color: #dbdb9a
+    transition: all .3s ease
+    &:hover
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4)
+    &:active
+      opacity: 0.5
+  &__change-btn
+    position: absolute
+    top: 24px
+    right: 24px
+    width: 20px
+    height: 20px
+    outline: none
+    border: none
+    background: transparent
+    fill: #5a76708e
+    transition: all .3s ease
+
+    &:hover
+      fill: #5a7670 //#5a7670
+
+.form-notes
+  position: relative
+  padding: 28px 32px 24px 32px
+  width: 320px
+  background: #f1f1ef
+  border-radius: 32px 4px
+  color: #b89f5d
+
+  &__input-wrapper
+    position: relative
+    border-radius: 4px 8px
+
+  &__input, &__textarea
+    width: 100%
+    outline: none
+    border: none
+    padding: 8px
+    border-radius: 4px 8px
+    background: transparent
+    box-shadow: -1px -2px 4px rgba(90 ,118,122, 0.5)
+    transition: background-color .3s ease, box-shadow .3s ease
+    color: inheriet
+    &:focus
+      background: #ffffff
+    &:hover
+      box-shadow: 2px 2px 12px rgba(90, 118, 112, 0.4)
+  &__textarea
+    resize: none
+    width: 100%
+    height: 80px
+  &__btn
+    padding: 12px 16px
+    background: #b89f5d
+    border-radius: 8px 4px
+    border: none
+    outline: none
+    color: #fff
+    font-weight: 600
+    text-transform: uppercase
+    transition: box-shadow .3s ease, opacity .3s ease
+    &:hover
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4)
+    &:active
+      opacity: 0.5
+  &__btn-close
+    position: absolute
+    top: 15px
+    right: 15px
+    border: none
+    outline: none
+    background: transparent
+    font-size: 1.2rem
+    font-weight: 600
+    color: #b8a05d79
+    transition: color .3s ease
+    &:hover
+      color: #b89f5d
+
+.close-form
+  visibility: hidden
+  opacity: 0
+
+.error
+  box-shadow: 2px 2px 12px rgb(250, 41, 42)
+
+.error-mesage
+  position: absolute
+  top: -16px
+  left: 2px
+  z-index: 1
+  padding: 4px 8px
+  border-radius: 2px
+  color: #5a7670
+  font-size: 0.7rem
+  opacity: 0
+  translate: 0.3s
+  text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px #fa292a, 0 0 16px #fa292a, 0 0 20px #fa292a, 0 0 24px #fa292a, 0 0 28px #fa292a
