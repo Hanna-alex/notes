@@ -260,4 +260,32 @@ img {
   opacity: 0;
   translate: 0.3s;
   text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px #fa292a, 0 0 16px #fa292a, 0 0 20px #fa292a, 0 0 24px #fa292a, 0 0 28px #fa292a;
+}
+
+@media screen and (max-width: 1064px) {
+  .container {
+    max-width: 886px;
+  }
+  .card-note {
+    width: 267px;
+  }
+}
+@media screen and (max-width: 920px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .container {
+    max-width: 92%;
+  }
+  .card-note {
+    width: 320px;
+  }
+  .notes-box__cards-box {
+    justify-content: space-around;
+  }
+  .card-note {
+    width: 320px;
+  }
 }/*# sourceMappingURL=style.css.map */
