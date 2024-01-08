@@ -130,6 +130,7 @@ function getCard(card, index) {
   cardDesc.classList.add('card-note__desc')
   let cardRemoveBtn = getBtn('card-note__remove-btn', 'Удалить')
   let cardImportantBtn = getBtn('card-note__important-btn', 'Важное')
+
   let cardGroupBtn = getDiv('card-note__btn-group')
   let changeBtn = getBtn('card-note__change-btn')
   changeBtn.insertAdjacentHTML('afterbegin', `
@@ -140,6 +141,11 @@ function getCard(card, index) {
     </g></g>
     </svg>
   `)
+
+  if (card.important === true) {
+    cardElem.classList.add('card-note_important')
+    cardImportantBtn.textContent = 'Не важное'
+  }
 
   cardImg.src = card.img
   cardDesc.textContent = card.desc
@@ -152,13 +158,13 @@ function getCard(card, index) {
   cardImportantBtn.onclick = function () {
     if (cardElem.classList.contains('card-note_important') === false) {
       cardElem.classList.add('card-note_important')
-      cardImportantBtn.textContent = 'Важное'
+      cardImportantBtn.textContent = 'Не важное'
       card.important = true
     }
     else {
       cardElem.classList.remove('card-note_important')
       card.important = false
-      cardImportantBtn.textContent = 'Не важное'
+      cardImportantBtn.textContent = 'Важное'
 
     }
 
