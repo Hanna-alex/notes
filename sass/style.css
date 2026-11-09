@@ -84,9 +84,13 @@ img {
   justify-content: center;
   align-items: center;
   background: rgba(90, 118, 112, 0.8156862745);
-  opacity: 0;
+  opacity: 1;
   visibility: visible;
-  transition: opacity 1.5s, visibility 2.5s;
+  transition: opacity 0.3s ease, e, visibility 0s linear 0.3s;
+}
+.notes-box__form-overlay.close-form {
+  opacity: 0;
+  visibility: hidden;
 }
 .notes-box__form {
   display: flex;
@@ -239,11 +243,6 @@ img {
 }
 .form-notes__btn-close:hover {
   color: #b89f5d;
-}
-
-.close-form {
-  visibility: hidden;
-  opacity: 0;
 }
 
 .error {

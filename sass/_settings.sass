@@ -57,7 +57,6 @@ img
   &__cards-box
     display: flex
     flex-wrap: wrap
-
     gap: 24px
     flex-basis: 100%
   &__form-overlay
@@ -71,13 +70,21 @@ img
     justify-content: center
     align-items: center
     background: #5a7670d0
-    opacity: 0
+    opacity: 1
     visibility: visible
-    transition: opacity 1.5s, visibility 2.5s
+    transition: opacity 0.3s ease,e, visibility 0s linear 0.3s
+
+    &.close-form
+      opacity: 0
+      visibility: hidden
+      
+ 
   &__form
     display: flex
     flex-direction: column
     gap: 16px
+
+
 
 .card-note
   position: relative
@@ -205,9 +212,7 @@ img
     &:hover
       color: #b89f5d
 
-.close-form
-  visibility: hidden
-  opacity: 0
+
 
 .error
   box-shadow: 2px 2px 12px rgb(250, 41, 42)

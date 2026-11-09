@@ -13,15 +13,16 @@ let cardsBox = getDiv('notes-box__cards-box')
 //создание элементов формы данных для заметки
 let overlay = getDiv('notes-box__form-overlay')
 overlay.classList.add('close-form')
+overlay.style.opacity = 0
 let form = document.createElement('form')
 form.classList.add('notes-box__form', 'form-notes')
-let formTitle = getTitle('h2', 'form-notes__title', 'Добавить заментку:')
+let formTitle = getTitle('h2', 'form-notes__title', 'Добавить заметку:')
 let inputTitle = getInput('form-notes__input', 'text', 'Заголовок заметки')
 let inputTitleWrapper = getDiv('form-notes__input-wrapper')
 inputTitleWrapper.append(inputTitle)
 let inputImg = getInput('form-notes__input', 'url', 'Укажите путь до картинки')
-let intupImgWrapper = getDiv('form-notes__input-wrapper')
-intupImgWrapper.append(inputImg)
+let inputImgWrapper = getDiv('form-notes__input-wrapper')
+inputImgWrapper.append(inputImg)
 let inputDesc = document.createElement('textarea')
 inputDesc.name = 'desc'
 let inputDescWrapper = getDiv('form-notes__input-wrapper')
@@ -65,7 +66,9 @@ function loadNotes() {
 	try {
 		const parsedNotes = JSON.parse(savedNotes)
 
-		return Array.isArray(parsedNotes) ? parsedNotes : defaultNotes
+		if (!Array.isArray(parsedNotes)) return defaultNotes
+
+		return parsedNotes.every(isValidNote) ? parsedNotes : defaultNotes
 	} catch (error) {
 		return defaultNotes
 	}
@@ -121,7 +124,7 @@ function getCard(card, index) {
 	let cardTitle = getTitle('h3', 'card-note__title', card.title)
 	let cardImgWrapper = getDiv('card-note__img')
 	let cardImg = document.createElement('img')
-	cardImg.alt = 'Картинка для заменки'
+	cardImg.alt = 'Картинка для заметки'
 	let cardDesc = document.createElement('p')
 	cardDesc.classList.add('card-note__desc')
 	let cardRemoveBtn = getBtn('card-note__remove-btn', 'Удалить')
@@ -131,9 +134,8 @@ function getCard(card, index) {
 	let changeBtn = getBtn('card-note__change-btn')
 	changeBtn.insertAdjacentHTML(
 		'afterbegin',
-		`
-    <!-- icon666.com - MILLIONS vector ICONS FREE -->
-    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 432.544 432.544" style="enable-background:new 0 0 432.544 432.544;" xml:space="preserve">
+		`   
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 432.544 432.544" style="enable-background:new 0 0 432.544 432.544;" xml:space="preserve">
     <g><g>
     <path d="M0,313.775v118.77h118.771l237.541-237.541L237.539,76.232L0,313.775z M103.638,395.999L103.638,395.999l-30.55,0.004 v-36.546H36.545v-30.553l25.981-25.981l67.093,67.092L103.638,395.999z M246.683,124.77c4.182,0,6.276,2.095,6.276,6.28 c0,1.906-0.664,3.521-1.999,4.856L96.214,290.651c-1.333,1.328-2.952,1.995-4.854,1.995c-4.184,0-6.279-2.098-6.279-6.279 c0-1.906,0.666-3.521,1.997-4.856l154.747-154.743C243.154,125.436,244.773,124.77,246.683,124.77z"/><path d="M421.976,77.654l-67.091-66.806C347.653,3.619,338.992,0,328.903,0c-10.283,0-18.842,3.619-25.693,10.848l-47.394,47.109 l118.773,118.77l47.394-47.392c7.042-7.043,10.561-15.608,10.561-25.697C432.54,93.743,429.022,85.08,421.976,77.654z"/>
     </g></g>
@@ -186,6 +188,8 @@ function getCard(card, index) {
 
 function openForm(title, desc, img, btnText, mode) {
 	formMode = mode
+
+	clearFormErrors()
 
 	inputTitle.value = title
 	inputDesc.value = desc
@@ -258,7 +262,7 @@ function validateForm() {
 		return false
 	}
 	if (title.length < 3) {
-		errorForm(errTitle, inputTitle, 'Заголовок не должен меньше 3 символов')
+		errorForm(errTitle, inputTitle, 'Заголовок не должен быть меньше 3 символов')
 		return false
 	}
 	if (!desc) {
@@ -279,13 +283,13 @@ function addNote(note) {
 	saveNotes()
 }
 
-function updatedNote(index, updateNode) {
+function updateNote(index, updatedNodeData) {
 	if (!notesList[index]) {
 		return
 	}
 	notesList[index] = {
 		...notesList[index],
-		...updateNode,
+		...updatedNodeData,
 	}
 	saveNotes()
 }
@@ -294,7 +298,7 @@ function saveNote(note) {
 	if (formMode === FORM_CREATE) {
 		addNote(note)
 	} else if (formMode === FORM_EDIT) {
-		updatedNote(indexCard, note)
+		updateNote(indexCard, note)
 	} else {
 		return
 	}
@@ -304,9 +308,23 @@ function saveNote(note) {
 	closeForm()
 }
 
-openModalBtn.addEventListener('click', (e) => {
-	e.preventDefault()
+function isValidNote(note) {
+	if (typeof note !== 'object' || note === null || Array.isArray(note)) {
+		return false
+	}
 
+	if (typeof note.title !== 'string') return false
+
+	if (typeof note.img !== 'string') return false
+
+	if (typeof note.desc !== 'string') return false
+
+	if (typeof note.important !== 'boolean') return false
+
+	return true
+}
+
+openModalBtn.addEventListener('click', () => {
 	formTitle.textContent = 'Создание заметки:'
 	openForm('', '', '', 'Добавить', FORM_CREATE)
 })
@@ -363,7 +381,7 @@ overlay.append(form)
 form.append(
 	formTitle,
 	inputTitleWrapper,
-	intupImgWrapper,
+	inputImgWrapper,
 	inputDescWrapper,
 	formBtn,
 	formCloseBtn,
