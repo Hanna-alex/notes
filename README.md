@@ -56,14 +56,12 @@ Notes - веб-приложение для создания и управлен�
 ```
 git clone
 https://github.com/Hanna-alex/notes
-
 ```
 
 2. Перейти в директорию проекта
 
 ```
 cd notes
-
 ```
 
 3. Открыть index.html в браузере или запустить расширение Live Server в VS code
