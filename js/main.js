@@ -1,3 +1,7 @@
+const STORAGE_KEY = 'notes'
+const FORM_CREATE = 'create'
+const FORM_EDIT = 'edit'
+
 let section = document.createElement('section')
 section.classList.add('notes-box')
 let container = getDiv('container')
@@ -12,22 +16,20 @@ overlay.classList.add('close-form')
 let form = document.createElement('form')
 form.classList.add('notes-box__form', 'form-notes')
 let formTitle = getTitle('h2', 'form-notes__title', 'Добавить заментку:')
-let intupTitle = getInput('form-notes__input', 'text', 'Заголовок заметки')
-let intupTitleWrapper = getDiv('form-notes__input-wrapper')
-intupTitleWrapper.append(intupTitle)
+let inputTitle = getInput('form-notes__input', 'text', 'Заголовок заметки')
+let inputTitleWrapper = getDiv('form-notes__input-wrapper')
+inputTitleWrapper.append(inputTitle)
 let inputImg = getInput('form-notes__input', 'url', 'Укажите путь до картинки')
 let intupImgWrapper = getDiv('form-notes__input-wrapper')
 intupImgWrapper.append(inputImg)
 let inputDesc = document.createElement('textarea')
+inputDesc.name = 'desc'
 let inputDescWrapper = getDiv('form-notes__input-wrapper')
 inputDescWrapper.append(inputDesc)
 inputDesc.classList.add('form-notes__textarea')
 inputDesc.placeholder = 'Текст заметки'
-form.classList.add('form-notes')
-let formBtn = getBtn('form-notes__btn', 'Добавить')
-formBtn.type = 'button'
+let formBtn = getBtn('form-notes__btn', 'Добавить', 'submit')
 let formCloseBtn = getBtn('form-notes__btn-close', 'X')
-formCloseBtn.type = 'button'
 let errTitle = getDiv('error-mesage')
 errTitle.textContent = ''
 errTitle.style.opacity = 0
@@ -44,14 +46,14 @@ const defaultNotes = [
 		important: false,
 	},
 	{
-		title: 'Космос ',
+		title: 'Космос',
 		img: 'https://rg.ru/uploads/images/190/88/93/iStock-1153308175.jpg',
 		desc: 'Космос не является абсолютно пустым пространством: в нём есть, хотя и с очень низкой плотностью, межзвёздное вещество (преимущественно ионы и атомы водорода), космические лучи и электромагнитное излучение, а также гипотетическая тёмная материя.',
 		important: true,
 	},
 ]
-
-const STORAGE_KEY = 'notes'
+let formMode = FORM_CREATE
+let notesList = loadNotes()
 
 function loadNotes() {
 	const savedNotes = localStorage.getItem(STORAGE_KEY)
@@ -69,8 +71,6 @@ function loadNotes() {
 	}
 }
 
-let notesList = loadNotes()
-
 function saveNotes() {
 	localStorage.setItem(STORAGE_KEY, JSON.stringify(notesList))
 }
@@ -82,10 +82,11 @@ function getDiv(className) {
 	return div
 }
 
-function getBtn(className, text = '') {
+function getBtn(className, text = '', type = 'button') {
 	let btn = document.createElement('button')
 	btn.classList.add(className)
 	btn.textContent = text
+	btn.type = type
 
 	return btn
 }
@@ -107,36 +108,9 @@ function getInput(className, type, placeholder) {
 	return input
 }
 
-function openForm(title, desc, img, btnText) {
-	intupTitle.value = title
-	inputDesc.value = desc
-	inputImg.value = img
-	formBtn.textContent = btnText
-
-	overlay.classList.remove('close-form')
-
-	setTimeout(() => {
-		overlay.style.opacity = 1
-	}, 1)
-}
-
-function closeForm() {
-	overlay.classList.add('close-form')
-	setTimeout(() => {
-		overlay.style.opacity = 0
-	}, 1)
-}
-
 function getFirstLetterCapitalized(str) {
 	return str[0].toUpperCase() + str.slice(1)
 }
-
-// function checkingField(elem, elemErr, errText) {
-// 	elemErr.textContent = ''
-// 	elem.classList.add('error')
-// 	elemErr.textContent = errText
-// 	setTimeout(() => (elemErr.style.opacity = 1), 250)
-// }
 
 function getCard(card, index) {
 	let cardElem = getDiv('notes-box__card-note')
@@ -147,6 +121,7 @@ function getCard(card, index) {
 	let cardTitle = getTitle('h3', 'card-note__title', card.title)
 	let cardImgWrapper = getDiv('card-note__img')
 	let cardImg = document.createElement('img')
+	cardImg.alt = 'Картинка для заменки'
 	let cardDesc = document.createElement('p')
 	cardDesc.classList.add('card-note__desc')
 	let cardRemoveBtn = getBtn('card-note__remove-btn', 'Удалить')
@@ -167,7 +142,6 @@ function getCard(card, index) {
 	)
 
 	if (card.important === true) {
-		// cardElem.classList.add('card-note_important')
 		cardImportantBtn.textContent = 'Не важное'
 	}
 
@@ -199,7 +173,7 @@ function getCard(card, index) {
 		let titleOld = notesList[index].title
 		let descOld = notesList[index].desc
 		let imgOld = notesList[index].img
-		openForm(titleOld, descOld, imgOld, 'Изменить')
+		openForm(titleOld, descOld, imgOld, 'Изменить', FORM_EDIT)
 		indexCard = index
 	}
 
@@ -210,6 +184,28 @@ function getCard(card, index) {
 	return cardElem
 }
 
+function openForm(title, desc, img, btnText, mode) {
+	formMode = mode
+
+	inputTitle.value = title
+	inputDesc.value = desc
+	inputImg.value = img
+	formBtn.textContent = btnText
+
+	overlay.classList.remove('close-form')
+
+	setTimeout(() => {
+		overlay.style.opacity = 1
+	}, 1)
+}
+
+function closeForm() {
+	overlay.classList.add('close-form')
+	setTimeout(() => {
+		overlay.style.opacity = 0
+	}, 1)
+}
+
 function errorForm(elemErr, elemInput, text) {
 	elemErr.textContent = text
 	elemErr.style.opacity = 1
@@ -217,116 +213,145 @@ function errorForm(elemErr, elemInput, text) {
 }
 
 function clearForm() {
+	inputTitle.value = ''
+	inputImg.value = ''
+	inputDesc.value = ''
+}
+
+function clearFormErrors() {
 	errTitle.textContent = ''
 	errDesc.textContent = ''
 
 	errTitle.style.opacity = 0
 	errDesc.style.opacity = 0
 
-	intupTitle.classList.remove('error')
+	inputTitle.classList.remove('error')
 	inputDesc.classList.remove('error')
-
-	intupTitle.value = ''
-	inputImg.value = ''
-	inputDesc.value = ''
 }
 
 function render(arrNotes) {
 	cardsBox.innerHTML = ''
-	for (let i = 0; i < arrNotes.length; i++) {
-		let card = getCard(arrNotes[i], i)
-		cardsBox.append(card)
+
+	if (arrNotes.length === 0) {
+		const emptyMessage = getTitle(
+			'p',
+			'notes-box__empty',
+			'У вас пока нет заметок. Создай первую!',
+		)
+		cardsBox.append(emptyMessage)
+	} else {
+		for (let i = 0; i < arrNotes.length; i++) {
+			let card = getCard(arrNotes[i], i)
+			cardsBox.append(card)
+		}
 	}
+}
+
+function validateForm() {
+	const title = inputTitle.value.trim()
+	const desc = inputDesc.value.trim()
+
+	clearFormErrors()
+
+	if (!title) {
+		errorForm(errTitle, inputTitle, 'Заголовок не должен быть пустым')
+		return false
+	}
+	if (title.length < 3) {
+		errorForm(errTitle, inputTitle, 'Заголовок не должен меньше 3 символов')
+		return false
+	}
+	if (!desc) {
+		errorForm(errDesc, inputDesc, 'Текст заметки не должен быть пустым')
+		return false
+	}
+
+	if (desc.length < 12) {
+		errorForm(errDesc, inputDesc, 'Текст заметки не должен быть меньше 12 символов ')
+		return false
+	}
+
+	return true
+}
+
+function addNote(note) {
+	notesList.push(note)
+	saveNotes()
+}
+
+function updatedNote(index, updateNode) {
+	if (!notesList[index]) {
+		return
+	}
+	notesList[index] = {
+		...notesList[index],
+		...updateNode,
+	}
+	saveNotes()
+}
+
+function saveNote(note) {
+	if (formMode === FORM_CREATE) {
+		addNote(note)
+	} else if (formMode === FORM_EDIT) {
+		updatedNote(indexCard, note)
+	} else {
+		return
+	}
+
+	render(notesList)
+	clearForm()
+	closeForm()
 }
 
 openModalBtn.addEventListener('click', (e) => {
 	e.preventDefault()
 
 	formTitle.textContent = 'Создание заметки:'
-	openForm('', '', '', 'Добавить')
+	openForm('', '', '', 'Добавить', FORM_CREATE)
 })
 
-formBtn.addEventListener('click', (e) => {
+form.addEventListener('submit', (e) => {
 	e.preventDefault()
 
-	errTitle.textContent = ''
-	errDesc.textContent = ''
-
-	errTitle.style.opacity = 0
-	errDesc.style.opacity = 0
-
-	let validValue = false
-	let titleValue = intupTitle.value.trim()
-	let imgSrc = inputImg.value
-		? inputImg.value
-		: 'https://funik.ru/wp-content/uploads/2018/10/6db3f15d0a21589aaa1b.jpg'
-	let descValue = inputDesc.value.trim()
-	let newNoteObj
-
-	// валидация формы
-
-	if (titleValue == '') {
-		errorForm(errTitle, intupTitle, 'Заголовок не должен быть пустым')
-	} else if (titleValue.length < 3) {
-		errorForm(errTitle, intupTitle, 'Заголовок не должен меньше 3 символов')
-	} else if (descValue == '') {
-		errTitle.textContent = ''
-		intupTitle.classList.remove('error')
-		errorForm(errDesc, inputDesc, 'Текст заметки не должен быть пустым')
-	} else if (descValue.length < 12) {
-		errorForm(errDesc, inputDesc, 'Текст заметки не должен быть меньше 12 символов ')
-	} else {
-		titleValue = getFirstLetterCapitalized(titleValue)
-		validValue = true
-
-		newNoteObj = {
-			title: titleValue,
-			img: imgSrc,
-			desc: descValue,
-			important: false,
-		}
-
-		clearForm()
+	if (!validateForm()) {
+		return
 	}
 
-	if (validValue && formBtn.textContent === 'Добавить') {
-		// добавили новые элементы массива
-		notesList.push(newNoteObj)
-		saveNotes()
+	const titleValue = getFirstLetterCapitalized(inputTitle.value.trim())
+	const imgSrc =
+		inputImg.value.trim() ||
+		'https://funik.ru/wp-content/uploads/2018/10/6db3f15d0a21589aaa1b.jpg'
+	const descValue = inputDesc.value.trim()
 
-		// рендер  карточек
-		render(notesList)
-
-		//очистить форму
-		clearForm()
-
-		closeForm()
+	const newNoteObj = {
+		title: titleValue,
+		img: imgSrc,
+		desc: descValue,
 	}
-	if (validValue && formBtn.textContent === 'Изменить') {
-		notesList[indexCard].title = titleValue
-		notesList[indexCard].img = imgSrc
-		notesList[indexCard].desc = descValue
 
-		saveNotes()
-		render(notesList)
-		closeForm()
+	if (formMode === FORM_CREATE) {
+		newNoteObj.important = false
 	}
+
+	saveNote(newNoteObj)
 })
 
 formCloseBtn.addEventListener('click', (e) => {
 	e.preventDefault()
 	closeForm()
 	clearForm()
+	clearFormErrors()
 })
 
 overlay.addEventListener('click', (e) => {
 	if (e.target === overlay) {
 		closeForm()
 		clearForm()
+		clearFormErrors()
 	}
 })
 
-//
 render(notesList)
 // добавление элементов
 document.body.append(section)
@@ -337,11 +362,11 @@ wrapper.append(overlay)
 overlay.append(form)
 form.append(
 	formTitle,
-	intupTitleWrapper,
+	inputTitleWrapper,
 	intupImgWrapper,
 	inputDescWrapper,
 	formBtn,
 	formCloseBtn,
 )
-intupTitleWrapper.append(errTitle)
+inputTitleWrapper.append(errTitle)
 inputDescWrapper.append(errDesc)

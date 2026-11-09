@@ -36,6 +36,7 @@ img {
   background: #5a7670;
 }
 .notes-box__wrapper {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -108,7 +109,6 @@ img {
 }
 .card-note__title {
   font-size: 2.2rem;
-  margin-top: 16px;
   margin-bottom: 16px;
 }
 .card-note__img {
